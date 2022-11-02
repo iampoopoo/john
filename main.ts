@@ -7,6 +7,10 @@ controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
         mySprite.vy += -200
     }
 })
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Coin, function (sprite, otherSprite) {
+    info.setScore(info.score() + 25)
+    otherSprite.destroy()
+})
 function setLevelTileMap () {
     if (Level == 0) {
         tiles.setCurrentTilemap(tilemap`level12`)
@@ -132,26 +136,9 @@ let enemy2: Sprite = null
 let Death_Respawn = 0
 let FollowSpeed = 0
 let myEnemy: Sprite = null
+let new_coin: Sprite = null
 let mySprite: Sprite = null
 let Level = 0
-let Coin = sprites.create(img`
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    . . . . . . . . . . . . . . . . 
-    `, SpriteKind.Coin)
 setLevelTileMap()
 Level = 1
 mySprite = sprites.create(img`
@@ -173,6 +160,28 @@ mySprite = sprites.create(img`
     . . . . . . . . . . . . . . . . 
     `, SpriteKind.Player)
 controller.moveSprite(mySprite, 100, 0)
+for (let value of tiles.getTilesByType(assets.tile`myTile28`)) {
+    new_coin = sprites.create(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . f f f f f f f . . . . 
+        . . . . f 5 5 5 5 5 5 5 f . . . 
+        . . . f 5 5 4 4 4 4 4 5 5 f . . 
+        . . f 5 5 4 5 5 5 5 5 5 5 5 f . 
+        . . f 5 4 5 5 5 5 5 5 5 5 5 f . 
+        . . f 5 4 5 5 5 5 5 5 5 5 5 f . 
+        . . f 5 4 5 5 5 5 5 5 5 5 5 f . 
+        . . f 5 4 5 5 5 5 5 5 5 5 5 f . 
+        . . f 5 4 5 5 5 5 5 5 5 5 5 f . 
+        . . f 5 5 4 5 5 5 5 5 5 5 5 f . 
+        . . . f 5 5 4 4 4 4 4 5 5 f . . 
+        . . . . f 5 5 5 5 5 5 5 f . . . 
+        . . . . . f f f f f f f . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, SpriteKind.Coin)
+    tiles.placeOnTile(new_coin, value)
+    tiles.setTileAt(value, assets.tile`myTile14`)
+}
 info.setScore(0)
 animation.runImageAnimation(
 mySprite,
